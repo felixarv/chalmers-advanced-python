@@ -1,15 +1,12 @@
 import json
 from pprint import pprint
 from haversine import haversine
+import sys
 
 
 TRAM_STOP_FILE = 'labs/data/tramstops.json'
 with open(TRAM_STOP_FILE, 'r') as fromFile:
     data = json.load(fromFile)
-
-with open("labs/data/tramnetwork.json", "r") as jsonfile:
-    tramdict = json.load(jsonfile)
-
 
 with open ("labs/data/tramlines.txt", "r", encoding= "UTF-8") as file:
     lines = file.read().replace(":","").strip().split("\n\n")
@@ -47,7 +44,7 @@ def build_tram_lines(lines):
         linedict[key] = values
     
     return (linedict, timedict)
-def build_tram_network(stopfile, linefile):
+def build_tram_network(linefile, stopfile):
 
     outdict = {"stops": build_tram_stops(stopfile), "lines": build_tram_lines(linefile)[0], "times": build_tram_lines(linefile)[1]}
 
@@ -148,18 +145,21 @@ def dialogue(tramfile):
             query = input("").lower().title().split()
             if query[0] == "Quit":
                 break
+
             answer = answer_query(tramdict, query)
 
             if answer:
                 print(answer)
-                print(bool(answer))
             else: 
-                print("unknown arguments")
-                print(bool(answer))
+                print("unknown arguments")   
         except:
             print("sorry, try that again")
 
-            
+if __name__ == '__main__':
+        if sys.argv[1:] == ['init']:
+            build_tram_network("tramlines.txt", "tramstops.json")
+        else:
+            dialogue("tramnetwork.json")	
         
         
           
@@ -167,7 +167,7 @@ def dialogue(tramfile):
         
    
 
-dialogue("labs/data/tramnetwork.json")
+#dialogue("labs/data/tramnetwork.json")
 
     
    
